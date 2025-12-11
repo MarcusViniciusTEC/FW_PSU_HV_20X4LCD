@@ -129,14 +129,20 @@ static void hmi_dashboard_show_out_status(void)
 
 static void hmi_dashboard_show_target_voltage(void)
 {
-   vLCD_HD44780_Puts(4, 0, "500.0V");
+    char sz_string[20] = {0};
+    snprintf(sz_string, sizeof(sz_string), "%u%u", hmi_dash_set_cursor[FIELD_VOLTAGE]  [INDEX_SECOND_DIGIT-1].value, hmi_dash_set_cursor[FIELD_VOLTAGE]  [INDEX_THIRD_DIGIT-1].value);
+
+    vLCD_HD44780_Puts(5, 0, sz_string);
 }
 
 /***********************************************************************************/
 
 static void hmi_dashboard_show_target_current(void)
 {
-    vLCD_HD44780_Puts(14, 0, "1.500A");
+    char sz_string[20] = {0};
+    snprintf(sz_string, sizeof(sz_string), "%u%u", hmi_dash_set_cursor[FIELD_CURRENT]  [INDEX_SECOND_DIGIT-1].value, hmi_dash_set_cursor[FIELD_CURRENT]  [INDEX_THIRD_DIGIT-1].value);
+
+    vLCD_HD44780_Puts(16, 0, sz_string);
 }
 
 /***********************************************************************************/
@@ -146,6 +152,7 @@ static void hmi_dashboard_show_cursor(void)
 
     
     vLCD_HD44780_CursorSet(hmi_dash_set_cursor[hmi_dash_ctrl.field][ hmi_dash_edit[hmi_dash_ctrl.field].index ].col, hmi_dash_set_cursor[hmi_dash_ctrl.field][hmi_dash_edit[hmi_dash_ctrl.field].index].row);
+    
 }
 
 /***********************************************************************************/
@@ -181,7 +188,7 @@ static void hmi_dashboard_increment_digit(void)
 
 static void hmi_dashboard_decrement_digit(void)
 {
-
+    hmi_dash_set_cursor  [hmi_dash_ctrl.field]  [hmi_dash_edit[hmi_dash_ctrl.field].index]  .value--;
 }
 
 /***********************************************************************************/
@@ -298,9 +305,10 @@ void hmi_dashboard_update_encoder(enc_state_t enc_state)
         break;
     }
 
-    char sz_string[20] = {0};
-    snprintf(sz_string, sizeof(sz_string), "%d", hmi_dash_set_cursor  [hmi_dash_ctrl.field]  [hmi_dash_edit[hmi_dash_ctrl.field].index]  .value);
-    vLCD_HD44780_Puts(2, 2, sz_string);
+
+    hmi_dashboard_show_target_current();
+    hmi_dashboard_show_target_voltage();
+    hmi_dashboard_show_cursor();
 
 }
 

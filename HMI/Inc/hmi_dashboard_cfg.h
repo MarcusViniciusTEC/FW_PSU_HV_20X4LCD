@@ -12,13 +12,13 @@
         {                                   \
             .col = 5,                       \
             .row = 0,                       \
-            .value = INDEX_SECOND_DIGIT       \
+            .value = 0       \
         }                                   \
         ,                                   \
         {                                   \
             .col = 6,                       \
             .row = 0,                       \
-            .value = INDEX_THIRD_DIGIT       \
+            .value = 0       \
         }                                   \
     }                                       \   
     ,                                       \
@@ -26,13 +26,13 @@
         {                                   \
             .col = 16,                      \
             .row = 0,                       \
-            .value = INDEX_SECOND_DIGIT       \
+            .value = 0       \
         }                                   \
         ,                                   \
         {                                   \
             .col = 17,                      \
             .row = 0,                       \
-            .value = INDEX_THIRD_DIGIT       \
+            .value = 0       \
         }                                   \
     }                                       \
 }
