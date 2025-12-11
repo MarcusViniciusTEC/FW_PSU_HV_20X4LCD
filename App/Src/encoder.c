@@ -6,6 +6,12 @@
 #include "task.h"
 #include "cmsis_os.h"
 
+#include "main.h"
+
+
+
+
+
 /***********************************************************************************/
 
  static enc_ctrl_t  enc_ctrl = {0};
@@ -19,6 +25,7 @@ void encoder_update(void);
 
 void encoder_init(void)
 {
+    
     enc_ctrl.state = ENC_STATE_STOPED;
     enc_ctrl.event = EVENT_STOPED;
     TaskHandle_t xHandle = NULL;

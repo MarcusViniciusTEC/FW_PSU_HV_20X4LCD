@@ -71,14 +71,14 @@ void Error_Handler(void);
 #define LCD_DB6_GPIO_Port GPIOB
 #define LCD_DB7_Pin GPIO_PIN_10
 #define LCD_DB7_GPIO_Port GPIOB
-#define BT_LEFT_Pin GPIO_PIN_12
-#define BT_LEFT_GPIO_Port GPIOB
+#define BT_OUT_Pin GPIO_PIN_12
+#define BT_OUT_GPIO_Port GPIOB
 #define BT_RIGHT_Pin GPIO_PIN_13
 #define BT_RIGHT_GPIO_Port GPIOB
 #define ENC_BT_Pin GPIO_PIN_14
 #define ENC_BT_GPIO_Port GPIOB
-#define BT_OUT_Pin GPIO_PIN_15
-#define BT_OUT_GPIO_Port GPIOB
+#define BT_LEFT_Pin GPIO_PIN_15
+#define BT_LEFT_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

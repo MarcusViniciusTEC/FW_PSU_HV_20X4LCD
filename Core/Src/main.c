@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 
 #include "hmi.h"
+#include "encoder.h"
 #include "LCD_HD44780.h"
 
 /* USER CODE END Includes */
@@ -47,6 +48,7 @@
 I2C_HandleTypeDef hi2c1;
 
 TIM_HandleTypeDef htim2;
+
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
@@ -101,6 +103,8 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+
+  HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 
   /* USER CODE END 2 */
 
@@ -322,8 +326,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : BT_LEFT_Pin BT_RIGHT_Pin ENC_BT_Pin BT_OUT_Pin */
-  GPIO_InitStruct.Pin = BT_LEFT_Pin|BT_RIGHT_Pin|ENC_BT_Pin|BT_OUT_Pin;
+  /*Configure GPIO pins : BT_OUT_Pin BT_RIGHT_Pin ENC_BT_Pin BT_LEFT_Pin */
+  GPIO_InitStruct.Pin = BT_OUT_Pin|BT_RIGHT_Pin|ENC_BT_Pin|BT_LEFT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -348,16 +352,13 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
   vLCD_HD44780_Init();
-
   hmi_init();
-  
-  vLCD_HD44780_Clear();
+  encoder_init();
   /* Infinite loop */
   for(;;)
   {
-      HAL_GPIO_TogglePin(BOARD_LED_GPIO_Port, BOARD_LED_Pin);
-    vLCD_HD44780_Puts(5, 0, "MV TECH");
-    vLCD_HD44780_Puts(5, 1, "(19)992787348");
+    HAL_GPIO_TogglePin(BOARD_LED_GPIO_Port, BOARD_LED_Pin);
+
     vTaskDelay(10);
   }
   /* USER CODE END 5 */
