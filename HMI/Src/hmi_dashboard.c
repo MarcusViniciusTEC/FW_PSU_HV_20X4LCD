@@ -45,6 +45,8 @@ static void hmi_dashboard_out_state_toggle(void);
 static void hmi_dashboard_exit(void);
 static void hmi_dashboard_toggle_mode(void);
 
+hmi_dash_out_stauts_t hmi_dash_get_out_status(void);
+
 
 /***********************************************************************************/
 
@@ -58,6 +60,14 @@ uint32_t hmi_dashboard_get_target_current(void)
 uint32_t hmi_dashboard_get_target_voltage(void)
 {   
     return hmi_dash_ctrl.target[FIELD_VOLTAGE];
+}
+
+/***********************************************************************************/
+
+hmi_dash_out_stauts_t hmi_dash_get_out_status(void)
+{
+
+    return hmi_dash_ctrl.out_status;
 }
 
 /***********************************************************************************/
@@ -295,11 +305,11 @@ void hmi_dashboard_toggle_mode(void)
     {
     case FIELD_VOLTAGE:
         hmi_dash_ctrl.field = FIELD_CURRENT;
-        vLCD_HD44780_Puts(7, 1, "V:");
+        vLCD_HD44780_Puts(9, 0, "I");
         break;
     case FIELD_CURRENT:
         hmi_dash_ctrl.field = FIELD_VOLTAGE;
-        vLCD_HD44780_Puts(7, 1, "I:");
+        vLCD_HD44780_Puts(9, 0, "V");
         break;
     default:
         break;
