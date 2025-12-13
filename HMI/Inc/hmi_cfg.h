@@ -52,7 +52,7 @@
 #define vector_buttons_data_default                     \
 {                                                       \
     {                                                   \
-        {BT_OUT_GPIO_Port, BT_OUT_Pin},                 \
+        {BT_SET_OUT_GPIO_Port, BT_SET_OUT_Pin},         \
         hmi_showing_update_data,                        \
         BUTTON_STATE_START,                             \
         BUTTON_OUT_STATE_ID,                            \
@@ -74,6 +74,15 @@
         hmi_showing_update_data,                        \
         BUTTON_STATE_START,                             \
         BUTTON_RIGHT_ID,                                \
+        RESET,                                          \
+        BUTTON_FIRST_TIME                               \
+    }                                                   \
+    ,                                                   \
+    {                                                   \
+        {BT_SEL_CC_CV_GPIO_Port, BT_SEL_CC_CV_Pin},     \
+        hmi_showing_update_data,                        \
+        BUTTON_STATE_START,                             \
+        BUTTON_SEL_CC_CV_ID,                                \
         RESET,                                          \
         BUTTON_FIRST_TIME                               \
     }                                                   \

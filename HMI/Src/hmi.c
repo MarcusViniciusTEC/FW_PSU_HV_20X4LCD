@@ -9,6 +9,7 @@
 #include "task.h"
 #include "cmsis_os.h"
 
+
 /***********************************************************************************/
 
 hmi_screen_info_t hmi_vector_screens[HMI_NUMBER_OF_SCREENS] = vector_hmi_screens_default;
@@ -33,46 +34,53 @@ static encoder_data_t encoder_data [] = {{hmi_showing_update_data_encoder, 0, 0}
 
 /***********************************************************************************/
 
-void hmi_init(void)
+board_errors_t hmi_init(void)
 {
 
+    board_errors_t error_code = NO_ERROR;
+
     hmi_ctrl.state = HMI_SHOWING_SCREEN;
+    
 
     for(hmi_ctrl.screen_id = 0; hmi_ctrl.screen_id < HMI_NUMBER_OF_SCREENS; hmi_ctrl.screen_id++)
     {
         hmi_vector_screens[hmi_ctrl.screen_id].init();
     }
     
-    hmi_ctrl.screen_id = HMI_ID_SCREEN_DASHBOARD;
+  
+    hmi_ctrl.screen_id = HMI_ID_SCREEN_INTRO;
     hmi_ctrl.next_screen_id = hmi_ctrl.screen_id;
-    TaskHandle_t xHandle = NULL;
+    TaskHandle_t xHandleHMI = NULL;
     if(xTaskCreate((TaskFunction_t)hmi_tread,         
                     "HMI",                         
-                    256	,                                   
+                    512	,                                   
                     NULL,                             
                     osPriorityNormal ,                        
-                    &xHandle )!= pdPASS)                     
+                    &xHandleHMI )!= pdPASS)                     
                     {
-
+                
                     }
                     else
                     {
-                       // HAL_GPIO_WritePin(LED_BOARD_GPIO_Port, LED_BOARD_Pin, 1);
+                    
                     }
 
+    TaskHandle_t xHandleHMI_UPDATE;
     if(xTaskCreate((TaskFunction_t)hmi_tread_update_screen,         
                     "HMI UPDATE",                         
-                    256	,                           
+                    1024	,                           
                     NULL,                           
                     osPriorityAboveNormal,                     
-                    &xHandle )  != pdPASS)
+                    &xHandleHMI_UPDATE)  != pdPASS)
                     {
-
+                 
                     }
                     else 
                     {
-                        //HAL_GPIO_TogglePin(LED_BOARD_GPIO_Port, LED_BOARD_Pin);
-                    }                                    
+                        error_code = NO_ERROR;
+                    }
+                    
+    return error_code;
 }
 
 /***********************************************************************************/
@@ -164,7 +172,7 @@ void hmi_tread(void const *pvParameters)
         default:
             break;
         }
-        vTaskDelay(10);
+        vTaskDelay(20);
     }
 }
 
@@ -182,7 +190,7 @@ void hmi_tread_update_screen(void const *pvParameters)
             break;
         case HMI_SHOWING_UPDATE_DATA:
             hmi_showing_data();
-           // HAL_GPIO_TogglePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin);
+            HAL_GPIO_TogglePin(BOARD_LED_GPIO_Port,BOARD_LED_Pin);
             break;
         default:
             break;

@@ -21,6 +21,7 @@ typedef enum
     BUTTON_OUT_STATE_ID = 0U,
     BUTTON_LEFT_ID,
     BUTTON_RIGHT_ID,
+    BUTTON_SEL_CC_CV_ID,
     BUTTON_ENC_ID,
     NUMBER_OF_BUTTONS,
 }button_id_t;

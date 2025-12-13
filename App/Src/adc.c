@@ -100,22 +100,9 @@ uint16_t ema_filter(adc_channels_t channel, uint16_t new_sample)
 
 /***********************************************************************************/
 
-uint16_t filter_adc(uint8_t channel)
-{
-    uint32_t adc_filtered = 0;
-
-    for(uint16_t samples = 0; samples < NUMBER_OF_SAMPLES; samples++)
-    {
-        adc_filtered += ADSreadADC_SingleEnded(&adc, channel);
-    }
-    return (adc_filtered/NUMBER_OF_SAMPLES);
-}
-
-/***********************************************************************************/
-
 uint32_t ADC_ADS1115_get_raw(adc_channels_t channel)
 {
-   return ema_filter(channel, adc_ctrl[channel].raw_value); 
+   return adc_ctrl[channel].raw_value; 
 }   
 
 /***********************************************************************************/
@@ -124,7 +111,6 @@ uint32_t ADC_ADS1115_GET_Raw_temp(adc_channels_temp_t temp_channel)
 {
     return adc_ctrl[ADC_CH_TEMP].raw_value_temp[temp_channel];
 }
-
 
 /***********************************************************************************/
 
@@ -168,15 +154,7 @@ void adc_thread(void const *pvParameters)
         for(uint8_t channel_index = 0; channel_index < ADC_NUMBER_OF_CHANELS; channel_index++)
         {  
             adc_ctrl[channel_index].raw_value = ADSreadADC_SingleEnded(&adc, channel_index);
-            if(adc_ctrl[ADC_CH_VOLTAGE].raw_value > 20000)
-            {
-                
-            }
             adc_read_temp();
-            if(adc_ctrl[ADC_CH_VOLTAGE].raw_value < 19000)
-            {   
-
-            }
         }      
         vTaskDelay(50);
     }

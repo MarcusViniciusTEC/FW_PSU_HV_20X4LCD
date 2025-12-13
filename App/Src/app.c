@@ -77,7 +77,6 @@ uint16_t app_get_temperature(adc_channels_temp_t ch)
     voltage = CALC_ADC_TO_VOLTAGE(ADC_ADS1115_GET_Raw_temp(ch), 32000);
     resistence = CALC_VOLTAGE_TO_RESISTENCE(voltage);
     temperature = CALC_RESISTANCE_TO_CELSIUS(resistence);
-
     return (uint16_t)temperature;
 }
 

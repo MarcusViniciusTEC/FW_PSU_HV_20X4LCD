@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+
+#include "board.h"
 #include "hmi.h"
 #include "encoder.h"
 #include "LCD_HD44780.h"
@@ -48,7 +50,6 @@
 I2C_HandleTypeDef hi2c1;
 
 TIM_HandleTypeDef htim2;
-
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
@@ -300,7 +301,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(BOARD_LED_GPIO_Port, BOARD_LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LCD_RS_Pin|LCD_EN_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LCD_RS_Pin|LCD_EN_Pin|RELAY_HV_PSU_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LCD_DB4_Pin|LCD_DB5_Pin|LCD_DB6_Pin|LCD_DB7_Pin, GPIO_PIN_RESET);
@@ -312,8 +313,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(BOARD_LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LCD_RS_Pin LCD_EN_Pin */
-  GPIO_InitStruct.Pin = LCD_RS_Pin|LCD_EN_Pin;
+  /*Configure GPIO pins : LCD_RS_Pin LCD_EN_Pin RELAY_HV_PSU_Pin */
+  GPIO_InitStruct.Pin = LCD_RS_Pin|LCD_EN_Pin|RELAY_HV_PSU_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -326,8 +327,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : BT_OUT_Pin BT_RIGHT_Pin ENC_BT_Pin BT_LEFT_Pin */
-  GPIO_InitStruct.Pin = BT_OUT_Pin|BT_RIGHT_Pin|ENC_BT_Pin|BT_LEFT_Pin;
+  /*Configure GPIO pins : BT_SEL_CC_CV_Pin BT_RIGHT_Pin BT_SET_OUT_Pin BT_LEFT_Pin
+                           ENC_BT_Pin */
+  GPIO_InitStruct.Pin = BT_SEL_CC_CV_Pin|BT_RIGHT_Pin|BT_SET_OUT_Pin|BT_LEFT_Pin
+                          |ENC_BT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -351,15 +354,14 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-  vLCD_HD44780_Init();
-  hmi_init();
-  encoder_init();
+
+  board_init();
   /* Infinite loop */
   for(;;)
   {
-    HAL_GPIO_TogglePin(BOARD_LED_GPIO_Port, BOARD_LED_Pin);
+    //HAL_GPIO_TogglePin(BOARD_LED_GPIO_Port, BOARD_LED_Pin);
 
-    vTaskDelay(10);
+    vTaskDelay(100);
   }
   /* USER CODE END 5 */
 }

@@ -15,26 +15,39 @@ typedef enum
 
 typedef enum
 {
+    DISPLAY_NOT_UPDTATING_EVENT= 0U,
+    DISPLAY_UPDATING_EVENT,
+    DISPLAY_UPDATING_DATA
+}hmi_dashboard_update_display_stataus_t;
+
+typedef enum
+{
     FIELD_VOLTAGE = 0U,
     FIELD_CURRENT,
     NUMBER_OF_FIELDS,
 }hmi_dash_fields_edits_t;
 
 
+typedef enum
+{
+    OUT_STATUS_OFF = 0U,
+    OUT_STATUS_RUN  
+}hmi_dash_out_stauts_t;
+
 typedef struct 
 {
     uint8_t index;
+    hmi_dash_out_stauts_t out_status;
     hmi_dash_fields_edits_t field;
+    hmi_dashboard_update_display_stataus_t display_update;
+    uint16_t target[NUMBER_OF_FIELDS];
 }hmi_dash_ctrl_t;
 
 typedef struct 
 {   
-    uint8_t value;
+    uint8_t first_digit;
     uint8_t index;
 }hmi_dash_edit_t;
-
-
-
 
 
 typedef struct 

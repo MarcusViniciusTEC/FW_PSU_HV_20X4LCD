@@ -5,9 +5,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-
 #include "hmi.h"
 
+#include "LCD_HD44780.h"
 /***********************************************************************************/
 
 static const hmi_menu_data_t hmi_menu_item_vector[HMI_MENU_NUMBER_OF_ITEMS] = hmi_menu_vector_item_default;
@@ -21,21 +21,17 @@ static void hmi_menu_show_menu_cursor(void);
 static void hmi_menu_increment_item_index(void);
 static void hmi_menu_decrement_item_index(void);
 
-
-
 /***********************************************************************************/
 
 void hmi_menu_init(void)
 {
     hmi_menu_ctrl.submenu_state = SUBMENU_OFF;
-    
 }
 
 /***********************************************************************************/
 
 static void hmi_menu_increment_item_index(void)
 {
-    
     hmi_menu_ctrl.item_index++;
     if(hmi_menu_ctrl.item_index > HMI_MENU_ID_SETTINGS)
     {
@@ -57,14 +53,20 @@ static void hmi_menu_decrement_item_index(void)
 /***********************************************************************************/
 static void hmi_menu_show_menu_cursor(void)
 {
-
+    vLCD_HD44780_Puts(0, hmi_menu_ctrl.item_index-1 , " ");
+    vLCD_HD44780_Puts(0, hmi_menu_ctrl.item_index+1 , " ");
+    vLCD_HD44780_Puts(0, hmi_menu_ctrl.item_index , ">");
 }
 
 /***********************************************************************************/
 
 static void hmi_menu_show_menu_itens(void)
 {
-
+    vLCD_HD44780_Clear();
+    for(uint8_t index = 0; index < HMI_NUMBER_ID_OF_MENU_ITEM; index++)
+    {
+        vLCD_HD44780_Puts(1, index, hmi_menu_item_vector[index].string);;
+    }
 }
 
 /***********************************************************************************/
@@ -97,7 +99,7 @@ void hmi_menu_update_button(button_id_t button_id, button_press_type_t button_pr
         switch (button_press_type)
         {
         case BUTTON_SHORT_PRESS:
-            switch (hmi_menu_item_vector[hmi_menu_ctrl.item_index].id)
+            switch ((uint8_t)hmi_menu_item_vector[hmi_menu_ctrl.item_index].id)
             {
             case HMI_MENU_ID_DASHBOARD:
                 hmi_set_screen(HMI_ID_SCREEN_DASHBOARD);
@@ -137,7 +139,6 @@ void hmi_menu_update_encoder(enc_state_t enc_state)
     default:
         break;
     }
-
     hmi_menu_show_menu_cursor();
 }
 

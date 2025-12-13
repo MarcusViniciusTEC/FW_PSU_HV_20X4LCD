@@ -32,12 +32,8 @@ typedef struct
 
 typedef struct 
 {
-
     menu_item_id_t id;
-    char *tittle;
-    char *string[5];
-    uint8_t value[5];
-    uint8_t number_itens;
+    char *string;
 }hmi_submenu_data_t;
 
 

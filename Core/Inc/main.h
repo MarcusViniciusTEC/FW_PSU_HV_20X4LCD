@@ -63,6 +63,8 @@ void Error_Handler(void);
 #define LCD_RS_GPIO_Port GPIOA
 #define LCD_EN_Pin GPIO_PIN_1
 #define LCD_EN_GPIO_Port GPIOA
+#define RELAY_HV_PSU_Pin GPIO_PIN_7
+#define RELAY_HV_PSU_GPIO_Port GPIOA
 #define LCD_DB4_Pin GPIO_PIN_0
 #define LCD_DB4_GPIO_Port GPIOB
 #define LCD_DB5_Pin GPIO_PIN_1
@@ -71,14 +73,16 @@ void Error_Handler(void);
 #define LCD_DB6_GPIO_Port GPIOB
 #define LCD_DB7_Pin GPIO_PIN_10
 #define LCD_DB7_GPIO_Port GPIOB
-#define BT_OUT_Pin GPIO_PIN_12
-#define BT_OUT_GPIO_Port GPIOB
+#define BT_SEL_CC_CV_Pin GPIO_PIN_12
+#define BT_SEL_CC_CV_GPIO_Port GPIOB
 #define BT_RIGHT_Pin GPIO_PIN_13
 #define BT_RIGHT_GPIO_Port GPIOB
-#define ENC_BT_Pin GPIO_PIN_14
-#define ENC_BT_GPIO_Port GPIOB
+#define BT_SET_OUT_Pin GPIO_PIN_14
+#define BT_SET_OUT_GPIO_Port GPIOB
 #define BT_LEFT_Pin GPIO_PIN_15
 #define BT_LEFT_GPIO_Port GPIOB
+#define ENC_BT_Pin GPIO_PIN_4
+#define ENC_BT_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
