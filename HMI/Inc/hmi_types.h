@@ -11,6 +11,7 @@ typedef enum
     HMI_ID_SCREEN_INTRO = 0U,
     HMI_ID_SCREEN_MENU,
     HMI_ID_SCREEN_DASHBOARD,
+    HMI_ID_SCREEN_VOLT_RAMP,
     HMI_NUMBERS_OF_ID
 }hmi_screens_id_t;
 

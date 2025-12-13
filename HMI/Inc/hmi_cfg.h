@@ -10,10 +10,11 @@
 #include "hmi.h"
 #include "hmi_intro.h"
 #include "hmi_dashboard.h"
+#include "hmi_voltage_ramp.h"
 
 /*******************************************************************************/
 
-#define HMI_NUMBER_OF_SCREENS 3
+#define HMI_NUMBER_OF_SCREENS 4
 
 /*******************************************************************************/
 
@@ -44,6 +45,15 @@
         hmi_dashboard_update_data,          \
         hmi_dashboard_update_button,        \
         hmi_dashboard_update_encoder        \
+    }                                       \
+    ,                                       \
+    {                                       \
+        HMI_ID_SCREEN_VOLT_RAMP,            \
+        hmi_voltRamp_init,                  \
+        hmi_voltRamp_show_screen,           \
+        hmi_voltRamp_update_data,           \
+        hmi_voltRamp_update_button,         \
+        hmi_voltRamp_update_encoder         \
     }                                       \
 }
 
@@ -82,7 +92,7 @@
         {BT_SEL_CC_CV_GPIO_Port, BT_SEL_CC_CV_Pin},     \
         hmi_showing_update_data,                        \
         BUTTON_STATE_START,                             \
-        BUTTON_SEL_CC_CV_ID,                                \
+        BUTTON_SEL_CC_CV_ID,                            \
         RESET,                                          \
         BUTTON_FIRST_TIME                               \
     }                                                   \

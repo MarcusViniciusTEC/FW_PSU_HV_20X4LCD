@@ -295,9 +295,11 @@ void hmi_dashboard_toggle_mode(void)
     {
     case FIELD_VOLTAGE:
         hmi_dash_ctrl.field = FIELD_CURRENT;
+        vLCD_HD44780_Puts(7, 1, "V:");
         break;
     case FIELD_CURRENT:
         hmi_dash_ctrl.field = FIELD_VOLTAGE;
+        vLCD_HD44780_Puts(7, 1, "I:");
         break;
     default:
         break;
@@ -336,7 +338,7 @@ void hmi_dashboard_show_screen(void)
     hmi_dashboard_show_fan_porcentage();
     hmi_dashboard_show_power();
     hmi_dashboard_show_cursor();
-    
+
     hmi_dash_ctrl.display_update = DISPLAY_UPDATING_DATA;
 }
 
@@ -358,6 +360,7 @@ void hmi_dashboard_update_data(void)
         hmi_dash_ctrl.display_update = DISPLAY_UPDATING_DATA;
         break;
     case DISPLAY_UPDATING_DATA:
+        //hmi_dashboard_show_cursor();
         hmi_dashboard_show_fan_porcentage();
         hmi_dashboard_show_voltage();
         hmi_dashboard_show_current();
