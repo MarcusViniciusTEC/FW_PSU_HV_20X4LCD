@@ -27,6 +27,6 @@
     ,                                                   \
     {                                                   \
         .id = HMI_MENU_ID_SETTINGS,                     \
-        .string ="4.SETTINGS"                           \   
+        .string ="4.SETTINGS"                           \
     }                                                   \
 }

@@ -122,7 +122,7 @@ static void app_set_dac_value(void)
 
     if(iset != app_ctrl.dac.last_value[DAC_CURRENT])
    {
-       DAC_MCP4725_set(DAC_CURRENT, (uint16_t)((iset*0.000026 / 3.3f) * 4095.0f));
+       DAC_MCP4725_set(DAC_CURRENT, (uint16_t)((iset*0.000026 / 3.300) * 4095.0f));
        app_ctrl.dac.last_value[DAC_CURRENT] = iset;
    }
 }

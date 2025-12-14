@@ -10,17 +10,17 @@
 {                                           \
     {/*voltage*/                            \
         {                                   \
-            .col = 5,                       \
+            .col = 4,                       \
             .row = 0,                       \
             .value = 0                      \
         }                                   \
         ,                                   \
         {                                   \
-            .col = 6,                       \
+            .col = 5,                       \
             .row = 0,                       \
             .value = 0                      \
         }                                   \
-    }                                       \   
+    }                                       \
     ,                                       \
     {/*current*/                            \
         {                                   \

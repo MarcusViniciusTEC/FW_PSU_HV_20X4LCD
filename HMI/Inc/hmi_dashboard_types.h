@@ -27,6 +27,20 @@ typedef enum
     NUMBER_OF_FIELDS,
 }hmi_dash_fields_edits_t;
 
+typedef enum
+{
+    CURSOR_STATE_IDLE = 0U,
+    CURSOR_STATE_SHOW_NUMBER,
+    CURSOR_STATE_WAIT_HIDE_DELAY,
+    CURSOR_STATE_HIDE_NUMBER,
+    CURSOR_STATE_WAIT_SHOW_DELAY
+}hmi_cursor_blnk_state_t;
+
+typedef enum
+{
+    CURSOR_BLINK_ON = 0U,
+    CURSOR_BLINK_OFF
+}hmi_cursor_state_t;
 
 typedef enum
 {
@@ -35,8 +49,19 @@ typedef enum
 }hmi_dash_out_stauts_t;
 
 typedef struct 
+{   
+    hmi_cursor_blnk_state_t blnk_state;
+    hmi_cursor_state_t state;
+    uint32_t last_time_show_cursor;
+    uint32_t last_time_hide_cursor;
+    uint32_t last_time_blnk_cursor
+}hmi_dash_cursor;
+
+
+typedef struct 
 {
     uint8_t index;
+    hmi_dash_cursor cursor;
     hmi_dash_out_stauts_t out_status;
     hmi_dash_fields_edits_t field;
     hmi_dashboard_update_display_stataus_t display_update;

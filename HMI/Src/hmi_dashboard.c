@@ -18,6 +18,19 @@
 
 #include "hmi_dashboard_types.h"
 
+
+uint8_t cursor_arrow[8] =
+{
+    0b00000,
+    0b00000,
+    0b00000,
+    0b00000,
+    0b00000,
+    0b00000,
+    0b00000,
+    0b11111
+};
+
 /***********************************************************************************/
 
 static hmi_dash_ctrl_t hmi_dash_ctrl = {0};
@@ -36,7 +49,6 @@ static void hmi_dashboard_show_target_voltage(void);
 static void hmi_dashboard_show_target_current(void);
 static void hmi_dashboard_show_cursor(void);
 static void hmi_dashboard_show_fan_porcentage(void);
-static void hmi_dashboard_show_current_in(void);
 static void hmi_dashboard_increment_digit(void);
 static void hmi_dashboard_decrement_digit(void);
 static void hmi_dashboard_increment_field(void);
@@ -44,6 +56,7 @@ static void hmi_dashboard_decrement_field(void);
 static void hmi_dashboard_out_state_toggle(void);
 static void hmi_dashboard_exit(void);
 static void hmi_dashboard_toggle_mode(void);
+static void hmi_dashboard_blnk_cursor(void);
 
 hmi_dash_out_stauts_t hmi_dash_get_out_status(void);
 
@@ -133,6 +146,7 @@ static void hmi_dashboard_out_state_toggle(void)
         break;
     case OUT_STATUS_RUN:
         hmi_dash_ctrl.out_status = OUT_STATUS_OFF;
+        break;
     default:
         hmi_dash_ctrl.out_status = OUT_STATUS_OFF;
         break;
@@ -199,8 +213,16 @@ static void hmi_dashboard_show_target_current(void)
 
 static void hmi_dashboard_show_cursor(void)
 {
-    vLCD_HD44780_CursorSet(hmi_dash_set_cursor[hmi_dash_ctrl.field][ hmi_dash_edit[hmi_dash_ctrl.field].index ].col, hmi_dash_set_cursor[hmi_dash_ctrl.field][hmi_dash_edit[hmi_dash_ctrl.field].index].row);
+
 }
+
+/***********************************************************************************/
+
+static void hmi_dashboard_hide_cursor(void)
+{
+    vLCD_HD44780_Puts(hmi_dash_set_cursor[hmi_dash_ctrl.field][ hmi_dash_edit[hmi_dash_ctrl.field].index ].col , hmi_dash_set_cursor[hmi_dash_ctrl.field][hmi_dash_edit[hmi_dash_ctrl.field].index].row, " ");
+}
+
 
 /***********************************************************************************/
 
@@ -305,11 +327,9 @@ void hmi_dashboard_toggle_mode(void)
     {
     case FIELD_VOLTAGE:
         hmi_dash_ctrl.field = FIELD_CURRENT;
-        vLCD_HD44780_Puts(9, 0, "I");
         break;
     case FIELD_CURRENT:
         hmi_dash_ctrl.field = FIELD_VOLTAGE;
-        vLCD_HD44780_Puts(9, 0, "V");
         break;
     default:
         break;
@@ -322,8 +342,10 @@ void hmi_dashboard_init(void)
 {
     hmi_dash_ctrl.field = FIELD_VOLTAGE;
     hmi_dash_ctrl.out_status = OUT_STATUS_OFF;
-    hmi_dash_edit[hmi_dash_ctrl.field].index = 0;
+    hmi_dash_edit[FIELD_VOLTAGE].index = INDEX_SECOND_DIGIT-1;
+    hmi_dash_edit[FIELD_CURRENT].index = INDEX_THIRD_DIGIT-1;
     hmi_dash_ctrl.display_update = DISPLAY_NOT_UPDTATING_EVENT;
+    hmi_dash_ctrl.cursor.blnk_state = CURSOR_STATE_IDLE;
 }
 
 /***********************************************************************************/
@@ -331,7 +353,6 @@ void hmi_dashboard_init(void)
 void hmi_dashboard_show_screen(void)
 {
     vLCD_HD44780_Clear();
-    vLCD_HD44780_CursorOn();
     vLCD_HD44780_Puts(0, 0, "Vs:");
     vLCD_HD44780_Puts(0, 1, "Vo:");
 
@@ -347,7 +368,6 @@ void hmi_dashboard_show_screen(void)
     hmi_dashboard_hardware_status();
     hmi_dashboard_show_fan_porcentage();
     hmi_dashboard_show_power();
-    hmi_dashboard_show_cursor();
 
     hmi_dash_ctrl.display_update = DISPLAY_UPDATING_DATA;
 }
@@ -363,20 +383,16 @@ void hmi_dashboard_update_data(void)
     case DISPLAY_UPDATING_EVENT:
         hmi_dashboard_show_cursor();
         hmi_dashboard_show_out_status();
-        hmi_dashboard_show_target_voltage();
-        hmi_dashboard_show_target_current();
         hmi_dashboard_hardware_status();
-        hmi_dashboard_show_cursor();
         hmi_dash_ctrl.display_update = DISPLAY_UPDATING_DATA;
         break;
     case DISPLAY_UPDATING_DATA:
-        //hmi_dashboard_show_cursor();
         hmi_dashboard_show_fan_porcentage();
         hmi_dashboard_show_voltage();
         hmi_dashboard_show_current();
         hmi_dashboard_show_power();
         hmi_dashboard_show_temp();
-        hmi_dashboard_show_cursor();
+        hmi_dashboard_blnk_cursor();
     default:
         break;
     }
@@ -387,8 +403,44 @@ void hmi_dashboard_update_data(void)
 void hmi_dashboard_exit(void)
 {
     hmi_dash_ctrl.display_update = DISPLAY_NOT_UPDTATING_EVENT;
-    vLCD_HD44780_CursorOff();
     vLCD_HD44780_Clear();
+}
+
+/***********************************************************************************/
+
+static void hmi_dashboard_blnk_cursor(void)
+{   
+    switch (hmi_dash_ctrl.cursor.blnk_state)
+    {
+    case CURSOR_STATE_IDLE:
+        hmi_dash_ctrl.cursor.blnk_state = CURSOR_STATE_SHOW_NUMBER;
+        break;
+    case CURSOR_STATE_SHOW_NUMBER:
+        hmi_dashboard_show_target_voltage();
+        hmi_dashboard_show_target_current();
+        hmi_dash_ctrl.cursor.last_time_show_cursor = xTaskGetTickCount();
+        hmi_dash_ctrl.cursor.blnk_state = CURSOR_STATE_WAIT_SHOW_DELAY;
+        break;
+    case CURSOR_STATE_WAIT_SHOW_DELAY:
+        if(xTaskGetTickCount() - hmi_dash_ctrl.cursor.last_time_show_cursor >= 300)
+        {
+            hmi_dash_ctrl.cursor.blnk_state = CURSOR_STATE_HIDE_NUMBER;
+        }
+        break;
+    case CURSOR_STATE_HIDE_NUMBER:
+        hmi_dashboard_hide_cursor();
+        hmi_dash_ctrl.cursor.last_time_hide_cursor = xTaskGetTickCount();
+        hmi_dash_ctrl.cursor.blnk_state = CURSOR_STATE_WAIT_HIDE_DELAY;
+        break;
+    case CURSOR_STATE_WAIT_HIDE_DELAY:
+        if(xTaskGetTickCount() - hmi_dash_ctrl.cursor.last_time_hide_cursor >= 50)
+        {
+            hmi_dash_ctrl.cursor.blnk_state = CURSOR_STATE_IDLE;
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 /***********************************************************************************/
@@ -453,6 +505,8 @@ void hmi_dashboard_update_encoder(enc_state_t enc_state)
         break;
     }
 
+    hmi_dashboard_show_target_voltage();
+    hmi_dashboard_show_target_current();
     hmi_dash_ctrl.display_update = DISPLAY_UPDATING_EVENT;
 }
 
