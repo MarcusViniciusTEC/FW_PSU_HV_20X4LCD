@@ -10,6 +10,8 @@
 #define NUMBER_OF_MODULES_ADC 1
 #define MODULE_DEFAULT 0
 
+extern I2C_HandleTypeDef hi2c1;
+
 /***********************************************************************************/
 
 ADS1xx5_I2C adc;
@@ -53,7 +55,7 @@ void adc_init(void)
     }
     else
     {
-        HAL_GPIO_WritePin(LED_BOARD_GPIO_Port, LED_BOARD_Pin, 1);
+       // HAL_GPIO_WritePin(LED_BOARD_GPIO_Port, LED_BOARD_Pin, 1);
     }
 }
 
@@ -102,7 +104,7 @@ uint16_t ema_filter(adc_channels_t channel, uint16_t new_sample)
 
 uint32_t ADC_ADS1115_get_raw(adc_channels_t channel)
 {
-   return adc_ctrl[channel].raw_value; 
+   return ema_filter(channel, adc_ctrl[channel].raw_value); 
 }   
 
 /***********************************************************************************/
@@ -149,15 +151,26 @@ static void adc_read_temp(void)
 
 void adc_thread(void const *pvParameters)
 {
+
+    TickType_t last = xTaskGetTickCount();
+
     for (;;)
     {
-        for(uint8_t channel_index = 0; channel_index < ADC_NUMBER_OF_CHANELS; channel_index++)
-        {  
-            adc_ctrl[channel_index].raw_value = ADSreadADC_SingleEnded(&adc, channel_index);
+        /* Canais rápidos */
+        for(uint8_t ch = 0; ch < ADC_NUMBER_OF_CHANELS; ch++)
+        {
+            adc_ctrl[ch].raw_value = ADSreadADC_SingleEnded(&adc, ch);
+        }
+        static uint8_t temp_div = 0;
+        if(++temp_div >= 20)
+        {
+            temp_div = 0;
             adc_read_temp();
-        }      
-        vTaskDelay(50);
+        }
+
+        vTaskDelayUntil(&last, pdMS_TO_TICKS(10)); // 100 Hz fixo
     }
 }
+
 
 /***********************************************************************************/

@@ -180,6 +180,9 @@ void hmi_tread(void const *pvParameters)
 
 void hmi_tread_update_screen(void const *pvParameters)
 {
+
+    TickType_t last = xTaskGetTickCount();
+
     for(;;)
     {
         switch (hmi_ctrl.state)
@@ -195,6 +198,6 @@ void hmi_tread_update_screen(void const *pvParameters)
         default:
             break;
         }
-        vTaskDelay(10);
+       vTaskDelayUntil(&last, pdMS_TO_TICKS(100));
     }
 }

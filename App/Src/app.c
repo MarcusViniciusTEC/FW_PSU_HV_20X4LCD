@@ -14,7 +14,7 @@
 
 typedef struct 
 {
-   last_value[DAC_NUMBER_OF_CHANELS];
+   uint16_t last_value[DAC_NUMBER_OF_CHANELS];
 }app_dac_ctrl_t;
 
 typedef struct 
@@ -36,13 +36,13 @@ static app_ctrl_t app_ctrl = {0};
 uint32_t app_get_centivolts(adc_channels_t channel)
 {
     uint32_t value = 0;
-    switch (adc_get_res_divider_status())
+    switch (0)
     {
     case ADC_RESISTOR_RESET_DIVIDER:
-        value = (uint32_t)ADC_ADS1115_get_raw(channel)*2.727272; // NEEDS CALIBRATION;
+        value = (uint32_t)ADC_ADS1115_get_raw(channel)*0.0275; // NEEDS CALIBRATION;
         break;
     case ADC_RESISTOR_SET_DIVIDER:
-        value = (uint32_t)ADC_ADS1115_get_raw(channel)*2.7272; // NEEDS CALIBRATION;
+        value = (uint32_t)ADC_ADS1115_get_raw(channel)*0.0275; // NEEDS CALIBRATION;
         break;
     default:
         break;
@@ -54,7 +54,12 @@ uint32_t app_get_centivolts(adc_channels_t channel)
 
 uint32_t app_get_miliamperes(adc_channels_t channel)
 {
-    uint32_t miliamps = (ADC_ADS1115_get_raw(channel)-389)*0.17285;
+    uint32_t miliamps = (ADC_ADS1115_get_raw(channel)-120)*0.0425757;
+
+    if(miliamps > 9000)
+    {
+        miliamps = 2000;
+    }
 
     if(miliamps > 3000)
     {
@@ -102,7 +107,7 @@ void app_init(void)
     }
     else
     {
-        HAL_GPIO_WritePin(LED_BOARD_GPIO_Port, LED_BOARD_Pin, 1);
+       // HAL_GPIO_WritePin(LED_BOARD_GPIO_Port, LED_BOARD_Pin, 1);
     }
 }
 
@@ -114,16 +119,31 @@ static void app_set_dac_value(void)
    uint32_t vset = hmi_dashboard_get_target_voltage();
    uint32_t iset = hmi_dashboard_get_target_current();
 
+   uint32_t vset_calc = (uint16_t)(((vset*10)*0.00064 / 3.300) * 4095.0f);
+
+   if(vset_calc > 4095)
+   {
+        vset_calc = 4095;
+   }
+
    if(vset != app_ctrl.dac.last_value[DAC_VOLTAGE])
    {
-       DAC_MCP4725_set(DAC_VOLTAGE, (uint16_t)((vset*0.00095 / 3.300) * 4095.0f));
+       DAC_MCP4725_set(DAC_VOLTAGE, vset_calc);
        app_ctrl.dac.last_value[DAC_VOLTAGE] = vset;
    }
 
-    if(iset != app_ctrl.dac.last_value[DAC_CURRENT])
+   if (iset > 0)
    {
-       DAC_MCP4725_set(DAC_CURRENT, (uint16_t)((iset*0.000026 / 3.300) * 4095.0f));
-       app_ctrl.dac.last_value[DAC_CURRENT] = iset;
+        HAL_GPIO_WritePin(DISABLE_CURRENT_LOOP_GPIO_Port, DISABLE_CURRENT_LOOP_Pin, GPIO_PIN_RESET);
+       if (iset != app_ctrl.dac.last_value[DAC_CURRENT])
+       {
+           DAC_MCP4725_set(DAC_CURRENT, (uint16_t) iset*6);
+           app_ctrl.dac.last_value[DAC_CURRENT] = iset;
+       }
+   }
+   else 
+   {
+        HAL_GPIO_WritePin(DISABLE_CURRENT_LOOP_GPIO_Port, DISABLE_CURRENT_LOOP_Pin, GPIO_PIN_SET);
    }
 }
 

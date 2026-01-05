@@ -81,6 +81,14 @@ void Error_Handler(void);
 #define BT_SET_OUT_GPIO_Port GPIOB
 #define BT_LEFT_Pin GPIO_PIN_15
 #define BT_LEFT_GPIO_Port GPIOB
+#define DISABLE_CURRENT_LOOP_Pin GPIO_PIN_8
+#define DISABLE_CURRENT_LOOP_GPIO_Port GPIOA
+#define MUX_S0_Pin GPIO_PIN_9
+#define MUX_S0_GPIO_Port GPIOA
+#define MUX_S1_Pin GPIO_PIN_10
+#define MUX_S1_GPIO_Port GPIOA
+#define MUX_S2_Pin GPIO_PIN_11
+#define MUX_S2_GPIO_Port GPIOA
 #define ENC_BT_Pin GPIO_PIN_4
 #define ENC_BT_GPIO_Port GPIOB
 

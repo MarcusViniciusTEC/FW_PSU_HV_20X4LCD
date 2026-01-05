@@ -34,8 +34,16 @@ typedef enum
 }hmi_screens_update_state_t;
 
 
+
+
+
+
+
+
+
 typedef struct 
 {
+    hmi_ctrl_display_t display_data;
     hmi_screens_id_t screen_id;
     hmi_screens_id_t last_screen_id;
     hmi_screens_id_t next_screen_id;

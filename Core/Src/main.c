@@ -28,6 +28,8 @@
 #include "hmi.h"
 #include "encoder.h"
 #include "LCD_HD44780.h"
+#include "dac.h"
+#include "dac.h"
 
 /* USER CODE END Includes */
 
@@ -59,8 +61,8 @@ osThreadId defaultTaskHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_I2C1_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_I2C1_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -101,8 +103,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_I2C1_Init();
   MX_TIM2_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
@@ -301,7 +303,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(BOARD_LED_GPIO_Port, BOARD_LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LCD_RS_Pin|LCD_EN_Pin|RELAY_HV_PSU_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LCD_RS_Pin|LCD_EN_Pin|RELAY_HV_PSU_Pin|DISABLE_CURRENT_LOOP_Pin
+                          |MUX_S0_Pin|MUX_S1_Pin|MUX_S2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LCD_DB4_Pin|LCD_DB5_Pin|LCD_DB6_Pin|LCD_DB7_Pin, GPIO_PIN_RESET);
@@ -313,8 +316,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(BOARD_LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LCD_RS_Pin LCD_EN_Pin RELAY_HV_PSU_Pin */
-  GPIO_InitStruct.Pin = LCD_RS_Pin|LCD_EN_Pin|RELAY_HV_PSU_Pin;
+  /*Configure GPIO pins : LCD_RS_Pin LCD_EN_Pin RELAY_HV_PSU_Pin DISABLE_CURRENT_LOOP_Pin
+                           MUX_S0_Pin MUX_S1_Pin MUX_S2_Pin */
+  GPIO_InitStruct.Pin = LCD_RS_Pin|LCD_EN_Pin|RELAY_HV_PSU_Pin|DISABLE_CURRENT_LOOP_Pin
+                          |MUX_S0_Pin|MUX_S1_Pin|MUX_S2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -328,9 +333,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : BT_SEL_CC_CV_Pin BT_RIGHT_Pin BT_SET_OUT_Pin BT_LEFT_Pin
-                           ENC_BT_Pin */
+                           ENC_BT_Pin PB6 PB7 */
   GPIO_InitStruct.Pin = BT_SEL_CC_CV_Pin|BT_RIGHT_Pin|BT_SET_OUT_Pin|BT_LEFT_Pin
-                          |ENC_BT_Pin;
+                          |ENC_BT_Pin|GPIO_PIN_6|GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);

@@ -8,6 +8,9 @@
 #include "hmi.h"
 #include "encoder.h"
 #include "LCD_HD44780.h"
+#include "adc.h"
+#include "dac.h"
+#include "app.h"
 
 #include "board_types.h"
 
@@ -57,6 +60,9 @@ void board_thread(void const *pvParameters)
     vLCD_HD44780_Init();
     hmi_init();
     encoder_init();
+    adc_init();
+    DAC_MCP4725_init();
+    app_init();
 
     board_ctrl.status = BOARD_IS_READY;
 

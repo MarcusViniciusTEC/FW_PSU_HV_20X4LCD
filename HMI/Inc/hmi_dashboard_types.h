@@ -55,13 +55,23 @@ typedef struct
     uint32_t last_time_show_cursor;
     uint32_t last_time_hide_cursor;
     uint32_t last_time_blnk_cursor
-}hmi_dash_cursor;
+}hmi_dash_cursor_t;
+
+typedef struct 
+{
+    uint32_t last_power;
+    uint32_t last_voltage;
+    uint32_t last_current;
+    uint8_t  last_temperature[2];
+}hmi_ctrl_display_t;
+
 
 
 typedef struct 
 {
+    hmi_ctrl_display_t display_data;
     uint8_t index;
-    hmi_dash_cursor cursor;
+    hmi_dash_cursor_t cursor;
     hmi_dash_out_stauts_t out_status;
     hmi_dash_fields_edits_t field;
     hmi_dashboard_update_display_stataus_t display_update;

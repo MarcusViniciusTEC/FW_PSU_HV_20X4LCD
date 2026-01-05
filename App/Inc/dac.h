@@ -1,5 +1,5 @@
-#ifndef _ADC_H_
-#define _ADC_H_
+#ifndef __DAC_H_
+#define __DAC_H_
 
 
 #include "main.h"

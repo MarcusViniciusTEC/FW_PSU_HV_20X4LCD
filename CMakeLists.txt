@@ -50,9 +50,9 @@ ${PROJ_PATH}/HMI/Src/hmi_dashboard.c
 ${PROJ_PATH}/HMI/Src/hmi_voltage_ramp.c
 ${PROJ_PATH}/HD44780/LCD_HD44780.c
 
-# ${PROJ_PATH}/App/Src/adc.c
-# ${PROJ_PATH}/App/Src/dac.c
-# ${PROJ_PATH}/App/Src/app.c
+${PROJ_PATH}/App/Src/adc.c
+${PROJ_PATH}/App/Src/dac.c
+${PROJ_PATH}/App/Src/app.c
 
 
 ${PROJ_PATH}/App/Src/MCP4725.c

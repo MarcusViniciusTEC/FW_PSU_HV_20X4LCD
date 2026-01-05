@@ -87,15 +87,31 @@ hmi_dash_out_stauts_t hmi_dash_get_out_status(void)
 
 static void hmi_dashboard_show_current(void)
 {
-    vLCD_HD44780_Puts(14, 1, "1.500A");
+
+    uint32_t current = app_get_miliamperes(ADC_CH_CURRENT_OUT);
+    char sz_string[28] = {0};
+
+    snprintf(sz_string, sizeof(sz_string), "%01d.%03dA",
+    (int)(current / 1000),
+    (int)(current % 1000));
+    vLCD_HD44780_Puts(14, 1, sz_string);
 }
 
 /***********************************************************************************/
 
 static void hmi_dashboard_show_voltage(void)
 {
-    
-     vLCD_HD44780_Puts(3, 1, "500V");
+    uint8_t d1 = (app_get_centivolts(1) / 100);
+    uint8_t d2 = (app_get_centivolts(1) / 10) % 10;
+    uint8_t d3 = (app_get_centivolts(1) % 10);
+    char sz_string[20] = {0};
+    snprintf(sz_string, sizeof(sz_string),
+         "%c%u%uV",
+         (d1 == 0) ? ' ' : ('0' + d1),
+         d2,
+         d3);
+    vLCD_HD44780_Puts(3, 1, sz_string);
+   // vLCD_HD44780_Puts(3, 1, "500V");
   
 }
 
@@ -110,19 +126,19 @@ static void hmi_dashboard_show_fan_porcentage(void)
 
 static void hmi_dashboard_show_power(void)
 {
-    uint32_t power =  243;  //app_get_centiwatts();
+    uint32_t power = app_get_centiwatts();
     char sz_string[28] = {0};
     snprintf(sz_string, sizeof(sz_string), "Pw:%03dW",
              (int)(power / 10));
-    vLCD_HD44780_Puts(0, 2, sz_string); 
+    vLCD_HD44780_Puts(0, 2, "000"); 
 }
 
 /***********************************************************************************/
 
 static void hmi_dashboard_show_temp(void)
 {
-    uint32_t temp_tranformer = 230; /*app_get_temperature(ADC_TEMP_CH_TRANSFORMER);*/
-    uint32_t temp_heatsink =  250;  /*app_get_temperature(ADC_TEMP_CH_HEATSINK);    */
+    uint32_t temp_tranformer = app_get_temperature(ADC_TEMP_CH_TRANSFORMER);
+    uint32_t temp_heatsink = app_get_temperature(ADC_TEMP_CH_HEATSINK);    
 
     char sz_string[28] = {0};
     snprintf(sz_string, sizeof(sz_string), "%02d'",
@@ -381,17 +397,34 @@ void hmi_dashboard_update_data(void)
     case DISPLAY_NOT_UPDTATING_EVENT:
         break;
     case DISPLAY_UPDATING_EVENT:
-        hmi_dashboard_show_cursor();
         hmi_dashboard_show_out_status();
         hmi_dashboard_hardware_status();
         hmi_dash_ctrl.display_update = DISPLAY_UPDATING_DATA;
         break;
     case DISPLAY_UPDATING_DATA:
-        hmi_dashboard_show_fan_porcentage();
-        hmi_dashboard_show_voltage();
-        hmi_dashboard_show_current();
-        hmi_dashboard_show_power();
-        hmi_dashboard_show_temp();
+        if(app_get_centivolts(1) != hmi_dash_ctrl.display_data.last_voltage)
+        {
+            hmi_dashboard_show_voltage();
+            hmi_dash_ctrl.display_data.last_voltage = app_get_centivolts(1);
+        }
+        if(app_get_miliamperes(ADC_CH_CURRENT_OUT) != hmi_dash_ctrl.display_data.last_current)
+        {
+            hmi_dashboard_show_current();
+            hmi_dash_ctrl.display_data.last_current = app_get_miliamperes(ADC_CH_CURRENT_OUT);
+        }
+        if(app_get_centiwatts() != hmi_dash_ctrl.display_data.last_power)
+        {
+
+            hmi_dash_ctrl.display_data.last_power = app_get_centiwatts();
+        }
+        
+        
+        
+
+      //  ;
+       // hmi_dashboard_show_power();
+       //hmi_dashboard_show_fan_porcentage();
+       // hmi_dashboard_show_temp();
         hmi_dashboard_blnk_cursor();
     default:
         break;
